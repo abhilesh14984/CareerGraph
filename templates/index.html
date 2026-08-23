@@ -1,0 +1,455 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>CareerGraph</title>
+
+    <link
+        rel="stylesheet"
+        href="{{ url_for('static', filename='css/style.css') }}"
+    >
+
+    <!-- Graph visualization library -->
+    <script
+        src="https://unpkg.com/vis-network/standalone/umd/vis-network.min.js">
+    </script>
+
+</head>
+
+
+<body>
+
+
+    <!-- =========================
+         NAVBAR
+    ========================== -->
+
+    <nav class="navbar">
+
+        <div class="logo">
+            Career<span>Graph</span>
+        </div>
+
+        <div class="nav-links">
+
+            <a href="/">Home</a>
+
+            <a href="#explore">
+                Explore
+            </a>
+
+            <a href="#graph">
+                Graph
+            </a>
+
+            <a href="#about">
+                About
+            </a>
+
+        </div>
+
+    </nav>
+
+
+
+    <main>
+
+
+        <!-- =========================
+             HERO
+        ========================== -->
+
+        <section class="hero">
+
+            <div class="hero-content">
+
+                <p class="tagline">
+                    CAREER INTELLIGENCE THROUGH CONNECTIONS
+                </p>
+
+
+                <h1>
+
+                    Discover where your
+
+                    <span>skills</span>
+
+                    can take you.
+
+                </h1>
+
+
+                <p class="description">
+
+                    Explore the connections between skills, careers
+                    and projects using a graph-powered career
+                    discovery system.
+
+                </p>
+
+
+                <div class="search-box">
+
+                    <input
+                        type="text"
+                        id="skillInput"
+                        placeholder="Search a skill, e.g. C++, Python, SQL..."
+                        onkeydown="handleSearchKey(event)"
+                    >
+
+
+                    <button onclick="searchSkill()">
+
+                        Explore
+
+                    </button>
+
+                </div>
+
+
+                <p class="search-hint">
+
+                    Try searching for C++, Python or SQL
+
+                </p>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- =========================
+             EXPLORE
+        ========================== -->
+
+        <section
+            class="explore-section"
+            id="explore"
+        >
+
+
+            <div class="section-heading">
+
+                <p class="section-label">
+                    EXPLORE THE GRAPH
+                </p>
+
+
+                <h2>
+                    Popular skills
+                </h2>
+
+
+                <p>
+                    Select a skill to discover connected careers
+                    and projects.
+                </p>
+
+            </div>
+
+
+
+            <!-- SKILLS -->
+
+            <div class="skill-grid">
+
+
+                <button
+                    class="skill-card"
+                    onclick="searchPopularSkill('C++')"
+                >
+
+                    <strong>
+                        C++
+                    </strong>
+
+                    <span>
+                        Software Development
+                    </span>
+
+                </button>
+
+
+
+                <button
+                    class="skill-card"
+                    onclick="searchPopularSkill('Python')"
+                >
+
+                    <strong>
+                        Python
+                    </strong>
+
+                    <span>
+                        Development & Data
+                    </span>
+
+                </button>
+
+
+
+                <button
+                    class="skill-card"
+                    onclick="searchPopularSkill('SQL')"
+                >
+
+                    <strong>
+                        SQL
+                    </strong>
+
+                    <span>
+                        Data & Backend
+                    </span>
+
+                </button>
+
+
+            </div>
+
+
+
+            <!-- LOADING -->
+
+            <div
+                id="loading"
+                class="state hidden"
+            >
+
+                Searching the career graph...
+
+            </div>
+
+
+
+            <!-- EMPTY -->
+
+            <div
+                id="empty"
+                class="state hidden"
+            >
+
+                No connections found for this skill.
+
+            </div>
+
+
+
+            <!-- =========================
+                 RESULTS
+            ========================== -->
+
+            <div
+                id="results"
+                class="results hidden"
+            >
+
+
+                <div class="results-header">
+
+                    <div>
+
+                        <p class="section-label">
+                            GRAPH CONNECTIONS
+                        </p>
+
+                        <h2 id="resultTitle">
+                            Results
+                        </h2>
+
+                    </div>
+
+                </div>
+
+
+
+                <!-- CARDS -->
+
+                <div
+                    id="resultCards"
+                    class="result-grid"
+                ></div>
+
+
+            </div>
+
+
+        </section>
+
+
+
+        <!-- =========================
+             GRAPH VISUALIZATION
+        ========================== -->
+
+        <section
+            class="graph-section"
+            id="graph"
+        >
+
+
+            <div class="section-heading">
+
+                <p class="section-label">
+                    KNOWLEDGE GRAPH
+                </p>
+
+
+                <h2>
+                    Explore the connections
+                </h2>
+
+
+                <p>
+                    Visualize how skills connect projects,
+                    careers and companies.
+                </p>
+
+            </div>
+
+
+
+            <!-- GRAPH LEGEND -->
+
+            <div class="graph-legend">
+
+                <div class="legend-item">
+
+                    <span class="legend-dot skill-dot"></span>
+
+                    Skill
+
+                </div>
+
+
+                <div class="legend-item">
+
+                    <span class="legend-dot project-dot"></span>
+
+                    Project
+
+                </div>
+
+
+                <div class="legend-item">
+
+                    <span class="legend-dot job-dot"></span>
+
+                    Job
+
+                </div>
+
+
+                <div class="legend-item">
+
+                    <span class="legend-dot company-dot"></span>
+
+                    Company
+
+                </div>
+
+            </div>
+
+
+
+            <!-- GRAPH -->
+
+            <div
+                id="careerGraph"
+                class="career-graph"
+            ></div>
+
+
+            <p class="graph-hint">
+
+                Drag nodes to explore the graph •
+                Scroll to zoom •
+                Search a skill above to update the graph
+
+            </p>
+
+
+        </section>
+
+
+
+        <!-- =========================
+             ABOUT
+        ========================== -->
+
+        <section
+            class="about-section"
+            id="about"
+        >
+
+
+            <div class="about-content">
+
+                <p class="section-label">
+                    WHY CAREERGRAPH?
+                </p>
+
+
+                <h2>
+
+                    Careers aren't isolated.
+                    They're connected.
+
+                </h2>
+
+
+                <p>
+
+                    CareerGraph models relationships between
+                    skills, jobs, projects and companies as a
+                    graph, making it easier to discover career
+                    paths that traditional table-based systems
+                    can make difficult to explore.
+
+                </p>
+
+            </div>
+
+
+        </section>
+
+
+    </main>
+
+
+
+    <!-- =========================
+         FOOTER
+    ========================== -->
+
+    <footer>
+
+        <p>
+            CareerGraph
+        </p>
+
+
+        <span>
+            Graph-powered career discovery
+        </span>
+
+    </footer>
+
+
+
+    <script
+        src="{{ url_for('static', filename='js/app.js') }}">
+    </script>
+
+
+</body>
+
+</html>
